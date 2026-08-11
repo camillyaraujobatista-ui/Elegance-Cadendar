@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elegance Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ===================== TOAST (notificação) ===================== -->
+  <div id="toast" class="toast"></div>
+
+  <!-- ===================== TELA: LOGIN ===================== -->
+  <section class="screen active" id="screen-login">
+    <div class="auth-wrap">
+      <div class="auth-logo">🌸</div>
+      <h1 class="auth-title">Elegance Calendar</h1>
+      <p class="subtitle" style="text-align:center; margin-bottom:22px;">Seu espaço de autocuidado</p>
+
+      <div class="field">
+        <label>Nome</label>
+        <input type="text" id="loginName" placeholder="Como podemos te chamar?">
+      </div>
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="loginEmail" placeholder="voce@email.com">
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="loginPassword" placeholder="••••••••">
+      </div>
+      <button class="btn-primary" id="btnLogin" style="width:100%; margin-top:6px;">Entrar</button>
+      <p class="auth-hint">Ainda não tem conta? <a href="#" id="linkSignup">Criar conta</a></p>
+    </div>
+  </section>
+
+  <!-- ===================== TELA: ONBOARDING (configurar ciclo) ===================== -->
+  <section class="screen" id="screen-onboarding">
+    <div class="auth-wrap">
+      <div class="auth-logo">📅</div>
+      <h1 class="auth-title">Vamos configurar seu ciclo</h1>
+      <p class="subtitle" style="text-align:center; margin-bottom:22px;">Isso ajuda a calcular suas fases automaticamente</p>
+
+      <div class="field">
+        <label>Quando começou sua última menstruação?</label>
+        <input type="date" id="obLastPeriod">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Duração do ciclo (dias)</label>
+          <input type="number" id="obCycleLength" value="28" min="20" max="45">
+        </div>
+        <div class="field">
+          <label>Duração da menstruação (dias)</label>
+          <input type="number" id="obPeriodLength" value="5" min="1" max="10">
+        </div>
+      </div>
+      <button class="btn-primary" id="btnFinishOnboarding" style="width:100%; margin-top:6px;">Concluir</button>
+    </div>
+  </section>
+
+  <!-- ===================== TELA: INÍCIO ===================== -->
+  <section class="screen" id="screen-inicio">
+    <header class="topbar">
+      <div>
+        <h1>Olá, <span id="userName">Roberta</span> <span class="sparkle">✨</span></h1>
+        <p class="subtitle">Como está se sentindo hoje?</p>
+      </div>
+      <button class="icon-btn" id="btnNotify" title="Notificações">🔔</button>
+    </header>
+
+    <div class="section-label" id="monthLabel">Junho 2026</div>
+
+    <div class="week-strip" id="weekStrip"></div>
+
+    <div class="cycle-card">
+      <div class="cycle-wheel" id="cycleWheel">
+        <svg viewBox="0 0 140 140">
+          <circle class="wheel-bg" cx="70" cy="70" r="60"></circle>
+          <circle class="wheel-progress" id="wheelProgress" cx="70" cy="70" r="60"></circle>
+        </svg>
+        <div class="wheel-center">
+          <span class="wheel-day" id="wheelDay">12</span>
+          <span class="wheel-label">dia do ciclo</span>
+        </div>
+      </div>
+      <div class="cycle-info">
+        <h3 id="phaseTitle">Fase Folicular</h3>
+        <p class="phase-desc" id="phaseDesc">Alta energia</p>
+        <span class="pill" id="fertilityPill">Chance de gravidez: Média</span>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2 class="section-title">Sua Rotina Diária</h2>
+      <button class="icon-btn" id="btnAddRoutine" title="Nova rotina">＋</button>
+    </div>
+    <div class="routine-list" id="routineList"></div>
+  </section>
+
+  <!-- ===================== TELA: CALENDÁRIO ===================== -->
+  <section class="screen" id="screen-calendario">
+    <header class="topbar">
+      <div>
+        <h1>Calendário</h1>
+        <p class="subtitle">Toque em um dia para registrar</p>
+      </div>
+    </header>
+
+    <div class="cal-nav">
+      <button class="icon-btn" id="calPrev">‹</button>
+      <span id="calMonthLabel" class="cal-month">Junho 2026</span>
+      <button class="icon-btn" id="calNext">›</button>
+    </div>
+
+    <div class="cal-legend">
+      <span><i class="dot dot-period"></i>Menstruação</span>
+      <span><i class="dot dot-fertile"></i>Fértil</span>
+      <span><i class="dot dot-ovul"></i>Ovulação</span>
+    </div>
+
+    <div class="cal-weekdays">
+      <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </section>
+
+  <!-- ===================== TELA: LEMBRETES ===================== -->
+  <section class="screen" id="screen-lembretes">
+    <header class="topbar">
+      <div>
+        <h1>Lembretes</h1>
+        <p class="subtitle">Consultas, remédios e datas importantes</p>
+      </div>
+      <button class="icon-btn" id="btnAddReminder" title="Novo lembrete">＋</button>
+    </header>
+
+    <div class="reminder-list" id="reminderList"></div>
+  </section>
+
+  <!-- ===================== TELA: DENÚNCIAS ===================== -->
+  <section class="screen" id="screen-denuncias">
+    <header class="topbar">
+      <div>
+        <h1>Denúncias</h1>
+        <p class="subtitle">Um espaço seguro para relatar</p>
+      </div>
+      <button class="icon-btn" id="btnAddDenuncia" title="Nova denúncia">＋</button>
+    </header>
+
+    <div class="emergency-card">
+      <strong>Precisa de ajuda urgente?</strong>
+      <div class="emergency-numbers">
+        <a href="tel:180"><span>180</span>Central de Atendimento à Mulher</a>
+        <a href="tel:190"><span>190</span>Polícia Militar</a>
+        <a href="tel:100"><span>100</span>Direitos Humanos</a>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:20px;">Seus relatos</h2>
+    <div class="denuncia-list" id="denunciaList"></div>
+  </section>
+
+  <!-- ===================== TELA: CHAT ===================== -->
+  <section class="screen" id="screen-chat">
+    <header class="topbar">
+      <div>
+        <h1>Assistente</h1>
+        <p class="subtitle">Tire dúvidas sobre seu ciclo</p>
+      </div>
+    </header>
+
+    <div class="chat-window" id="chatWindow"></div>
+
+    <div class="chat-input-bar">
+      <input type="text" id="chatInput" placeholder="Digite sua pergunta...">
+      <button id="chatSend" class="icon-btn primary">➤</button>
+    </div>
+  </section>
+
+  <!-- ===================== NAV INFERIOR ===================== -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-item active" data-screen="inicio">
+      <span class="nav-icon">🏠</span><span>Início</span>
+    </button>
+    <button class="nav-item" data-screen="calendario">
+      <span class="nav-icon">📅</span><span>Calendário</span>
+    </button>
+    <button class="nav-item" data-screen="lembretes">
+      <span class="nav-icon">⏰</span><span>Lembretes</span>
+    </button>
+    <button class="nav-item" data-screen="denuncias">
+      <span class="nav-icon">🛡️</span><span>Denúncias</span>
+    </button>
+    <button class="nav-item" data-screen="chat">
+      <span class="nav-icon">💬</span><span>Chat</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- ===================== MODAL: DIA DO CALENDÁRIO ===================== -->
+<div class="modal-overlay" id="dayModalOverlay">
+  <div class="modal">
+    <h3 id="dayModalTitle">Registrar dia</h3>
+    <p class="modal-sub">O que você está sentindo hoje?</p>
+    <div class="symptom-grid" id="symptomGrid"></div>
+    <label class="checkbox-row">
+      <input type="checkbox" id="markPeriod">
+      Marcar início da menstruação
+    </label>
+    <label class="checkbox-row">
+      <input type="checkbox" id="markPeriodEnd">
+      Marcar fim da menstruação
+    </label>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="dayModalCancel">Cancelar</button>
+      <button class="btn-primary" id="dayModalSave">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: NOVO LEMBRETE ===================== -->
+<div class="modal-overlay" id="reminderModalOverlay">
+  <div class="modal">
+    <h3>Novo lembrete</h3>
+    <div class="field">
+      <label>Título</label>
+      <input type="text" id="reminderTitle" placeholder="Ex: Consulta ginecológica">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="reminderDate">
+      </div>
+      <div class="field">
+        <label>Horário</label>
+        <input type="time" id="reminderTime">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="reminderModalCancel">Cancelar</button>
+      <button class="btn-primary" id="reminderModalSave">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: NOVA/EDITAR ROTINA ===================== -->
+<div class="modal-overlay" id="routineModalOverlay">
+  <div class="modal">
+    <h3 id="routineModalTitle">Nova rotina</h3>
+    <div class="field">
+      <label>Ícone</label>
+      <div class="icon-picker" id="iconPicker"></div>
+    </div>
+    <div class="field">
+      <label>Título</label>
+      <input type="text" id="routineTitle" placeholder="Ex: Tomar chá calmante">
+    </div>
+    <div class="field">
+      <label>Descrição</label>
+      <input type="text" id="routineDesc" placeholder="Ex: Antes de dormir">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="routineModalCancel">Cancelar</button>
+      <button class="btn-primary" id="routineModalSave">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: NOVA DENÚNCIA ===================== -->
+<div class="modal-overlay" id="denunciaModalOverlay">
+  <div class="modal">
+    <h3 id="denunciaModalTitle">Nova denúncia</h3>
+    <div class="field">
+      <label>Categoria</label>
+      <select id="denunciaCategoria">
+        <option>Assédio</option>
+        <option>Violência doméstica</option>
+        <option>Perseguição</option>
+        <option>Discriminação</option>
+        <option>Outro</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Local (opcional)</label>
+      <input type="text" id="denunciaLocal" placeholder="Ex: Trabalho, rua, condomínio...">
+    </div>
+    <div class="field">
+      <label>Descrição</label>
+      <input type="text" id="denunciaDesc" placeholder="Descreva o ocorrido">
+    </div>
+    <label class="checkbox-row">
+      <input type="checkbox" id="denunciaAnonima" checked>
+      Enviar de forma anônima
+    </label>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="denunciaModalCancel">Cancelar</button>
+      <button class="btn-primary" id="denunciaModalSave">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== POP-UP DE LEMBRETE (notificação) ===================== -->
+<div class="popup-overlay" id="reminderPopup">
+  <div class="popup-card">
+    <div class="popup-icon">⏰</div>
+    <h3 id="popupTitle">Lembrete</h3>
+    <p id="popupBody">Você tem um compromisso hoje.</p>
+    <button class="btn-primary" id="popupClose">Entendi</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
