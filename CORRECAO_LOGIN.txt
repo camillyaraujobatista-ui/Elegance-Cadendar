@@ -1,0 +1,10 @@
+CORREÇÃO DO LOGIN
+
+Foi corrigida a consulta usada ao carregar os dados após o login.
+
+A versão anterior usava JSON_ARRAYAGG(), função que pode não estar disponível
+em algumas versões do MariaDB incluídas no XAMPP. Isso fazia o login chegar
+até a API, mas falhar ao carregar os dados da conta.
+
+Substitua o arquivo api.php antigo por este arquivo corrigido.
+Não é necessário recriar o banco nem apagar a conta já cadastrada.
